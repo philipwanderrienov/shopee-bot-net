@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "nAjgouOlnts=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\philip.wanderrienov\\Music\\shopeebotnet\\shopeebotnet.Server\\shopeebotnet.Server.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\philip.wanderrienov\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.8\\microsoft.aspnetcore.openapi.10.0.8.nupkg.sha512",
+    "C:\\Users\\philip.wanderrienov\\.nuget\\packages\\microsoft.aspnetcore.spaproxy\\10.0.8\\microsoft.aspnetcore.spaproxy.10.0.8.nupkg.sha512",
+    "C:\\Users\\philip.wanderrienov\\.nuget\\packages\\microsoft.openapi\\2.0.0\\microsoft.openapi.2.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

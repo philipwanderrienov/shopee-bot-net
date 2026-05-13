@@ -1,0 +1,6 @@
+@shopeebotnet.Server_HostAddress = http://localhost:5236
+
+GET {{shopeebotnet.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

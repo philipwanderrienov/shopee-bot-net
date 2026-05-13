@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="shopeebotnet.client/shopeebotnet.client.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="shopeebotnet.Server/shopeebotnet.Server.csproj" />
+</Solution>
