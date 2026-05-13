@@ -24,6 +24,8 @@ if (string.IsNullOrWhiteSpace(jwtIssuer) || string.IsNullOrWhiteSpace(jwtAudienc
 
 // Add services
 builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 // EF Core (PostgreSQL)
 builder.Services.AddDbContext<ShopeeAffiliateContext>(options =>
@@ -64,17 +66,19 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-app.UseDefaultFiles();
-app.MapStaticAssets();
-
-
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Shopee Bot Net API");
+    c.RoutePrefix = "";
+});
+
 app.MapControllers();
 
-app.MapFallbackToFile("/index.html");
 
 app.Run();
