@@ -1,0 +1,29 @@
+flowchart TD
+  A[Client/Partner App] -->|POST /api/auth/register| B[AuthController\nRegister user]
+  A -->|POST /api/auth/login| C[AuthController\nIssue JWT]
+
+  C -->|JWT| D[Authenticated user/affiliate admin]
+
+  D -->|POST /api/affiliate-links/generate\n(admin)| E[AffiliateLinksController\nGenerate short_code + short_url\nStore affiliate_links]
+  E -->|short_url| F[Client uses short_url]
+
+  F -->|GET /r/{shortCode}| G[RedirectController\nLookup affiliate_links]
+  G -->|Not found| H[404 Affiliate link not found]
+  G -->|Found| I[RedirectController\nLog click into clicks table]
+  I --> J[HTTP Redirect to original_url]
+
+  J -->|User arrives| K[Conversion happens externally (Shopee postback)]
+
+  K -->|POST /api/postback/conversion\nwith HMAC header| L[PostbackController\nVerify signature]
+  L --> M[Find click by click_id]
+  M -->|Not found| N[404 Click not found]
+  M -->|Found| O[Insert conversion row into conversions\nMark click.converted=true]
+
+  O --> P[AnalyticsController\nGET summary metrics]
+  P -->|link/product summaries| F
+
+  D -->|GET /api/recommendations/products\n(auth)| Q[RecommendationsController\nList products]
+  D -->|GET /api/recommendations/today\n(auth)| R[RecommendationsController\nJoin daily_recommendations + products]
+
+  D -->|GET /api/scoring-settings/current\n(auth)| S[ScoringSettingsController\nPick active scoring window]
+  D -->|POST /api/scoring-settings\n(admin)| T[ScoringSettingsController\nCreate new weights window]

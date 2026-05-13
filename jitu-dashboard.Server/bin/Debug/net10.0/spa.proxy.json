@@ -1,0 +1,10 @@
+{
+"SpaProxyServer": {
+"ServerUrl": "https://localhost:49347",
+"RedirectUrl": "",
+"LaunchCommand": "npm start",
+"WorkingDirectory": "D:\\jitu-dashboard\\jitu-dashboard\\jitu-dashboard.Server\\..\\jitu-dashboard.client",
+"MaxTimeoutInSeconds": "120",
+"KeepRunning": "false"
+}
+}

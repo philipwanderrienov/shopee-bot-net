@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\philip.wanderrienov\\Music\\shopeebotnet\\shopeebotnet.Server\\shopeebotnet.Server.csproj": {}
+    "C:\\Users\\philip.wanderrienov\\Music\\shopee-bot-net\\shopeebotnet.Server\\shopeebotnet.Server.csproj": {}
   },
   "projects": {
-    "C:\\Users\\philip.wanderrienov\\Music\\shopeebotnet\\shopeebotnet.Server\\shopeebotnet.Server.csproj": {
+    "C:\\Users\\philip.wanderrienov\\Music\\shopee-bot-net\\shopeebotnet.Server\\shopeebotnet.Server.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\philip.wanderrienov\\Music\\shopeebotnet\\shopeebotnet.Server\\shopeebotnet.Server.csproj",
+        "projectUniqueName": "C:\\Users\\philip.wanderrienov\\Music\\shopee-bot-net\\shopeebotnet.Server\\shopeebotnet.Server.csproj",
         "projectName": "shopeebotnet.Server",
-        "projectPath": "C:\\Users\\philip.wanderrienov\\Music\\shopeebotnet\\shopeebotnet.Server\\shopeebotnet.Server.csproj",
+        "projectPath": "C:\\Users\\philip.wanderrienov\\Music\\shopee-bot-net\\shopeebotnet.Server\\shopeebotnet.Server.csproj",
         "packagesPath": "C:\\Users\\philip.wanderrienov\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\philip.wanderrienov\\Music\\shopeebotnet\\shopeebotnet.Server\\obj\\",
+        "outputPath": "C:\\Users\\philip.wanderrienov\\Music\\shopee-bot-net\\shopeebotnet.Server\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -32,7 +32,6 @@
         },
         "frameworks": {
           "net10.0": {
-            "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {}
           }
@@ -51,16 +50,39 @@
       },
       "frameworks": {
         "net10.0": {
-          "framework": "net10.0",
           "targetAlias": "net10.0",
           "dependencies": {
-            "Microsoft.AspNetCore.OpenApi": {
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.0.3, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
               "version": "[10.0.8, )"
             },
             "Microsoft.AspNetCore.SpaProxy": {
               "target": "Package",
               "version": "[10.*-*, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[10.0.7, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "target": "Package",
+              "version": "[10.0.7, )"
+            },
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[10.0.1, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[7.2.0, )"
+            },
+            "System.IdentityModel.Tokens.Jwt": {
+              "target": "Package",
+              "version": "[8.3.1, )"
             }
           },
           "imports": [
