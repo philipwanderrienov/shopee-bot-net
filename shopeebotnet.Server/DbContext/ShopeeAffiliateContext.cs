@@ -1,5 +1,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
+using Npgsql.EntityFrameworkCore.PostgreSQL;
 using shopeebotnet.Server.Models;
 
 namespace shopeebotnet.Server.DbContext;
@@ -21,6 +22,9 @@ public class ShopeeAffiliateContext : Microsoft.EntityFrameworkCore.DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.HasPostgresEnum<AffiliateRoleModel>("affiliate_role");
+        modelBuilder.HasPostgresEnum<ConversionStatusModel>("conversion_status");
+
         modelBuilder.Entity<AppUserModel>(entity =>
         {
             entity.ToTable("app_users");
@@ -28,7 +32,9 @@ public class ShopeeAffiliateContext : Microsoft.EntityFrameworkCore.DbContext
             entity.Property(x => x.Id).HasColumnName("id");
             entity.Property(x => x.PasswordHash).HasColumnName("password_hash").IsRequired();
             entity.Property(x => x.Email).HasColumnName("email").IsRequired();
-            entity.Property(x => x.Role).HasColumnName("role").HasConversion<string>();
+            entity.Property(x => x.Role)
+                .HasColumnName("role")
+                .HasColumnType("affiliate_role");
             entity.Property(x => x.CreatedAt).HasColumnName("created_at");
             entity.Property(x => x.UpdatedAt).HasColumnName("updated_at");
         });
@@ -85,7 +91,13 @@ public class ShopeeAffiliateContext : Microsoft.EntityFrameworkCore.DbContext
             entity.Property(x => x.ClickId).HasColumnName("click_id");
             entity.Property(x => x.OrderId).HasColumnName("order_id");
             entity.Property(x => x.Commission).HasColumnName("commission");
-            entity.Property(x => x.Status).HasColumnName("status").HasConversion<string>();
+            entity.Property(x => x.Status)
+                .HasColumnName("status")
+                .HasColumnType("conversion_status")
+                .HasConversion(
+                    v => v.ToString(),
+                    v => (ConversionStatusModel)Enum.Parse(typeof(ConversionStatusModel), v)
+                );
             entity.Property(x => x.RecordedAt).HasColumnName("recorded_at");
         });
 

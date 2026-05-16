@@ -41,7 +41,7 @@ public class RedirectController : ControllerBase
 
     private async Task LogClickAsync(AffiliateLinkModel link)
     {
-        var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var ip = HttpContext.Connection.RemoteIpAddress; // maps to PostgreSQL inet
         var userAgent = Request.Headers.UserAgent.ToString();
         var trafficSource =
             Request.Query.TryGetValue("traffic_source", out var values) && values.Count > 0

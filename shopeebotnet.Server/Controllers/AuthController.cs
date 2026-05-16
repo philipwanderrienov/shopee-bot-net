@@ -46,18 +46,28 @@ public class AuthController : ControllerBase
         if (existing != null)
             return Conflict(new { message = "Email already exists." });
 
+        var id = Guid.NewGuid();
+        var now = DateTime.UtcNow;
+
+        var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+        var roleText = AffiliateRoleModel.affiliate.ToString();
+
+        // Avoid EF/Npgsql enum binding issues by inserting with an explicit cast.
+        // app_users.role is a PostgreSQL enum: affiliate_role
+        await _db.Database.ExecuteSqlInterpolatedAsync($@"
+            INSERT INTO app_users (id, email, password_hash, role, created_at, updated_at)
+            VALUES ({id}, {normalizedEmail}, {passwordHash}, {roleText}::text::affiliate_role, {now}, {now});
+        ");
+
         var user = new AppUserModel
         {
-            Id = Guid.NewGuid(),
+            Id = id,
             Email = normalizedEmail,
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+            PasswordHash = passwordHash,
             Role = AffiliateRoleModel.affiliate,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
+            CreatedAt = now,
+            UpdatedAt = now
         };
-
-        _db.AppUsers.Add(user);
-        await _db.SaveChangesAsync();
 
         var token = GenerateAccessToken(user);
         var minutes = _configuration.GetValue<int>("Jwt:AccessTokenMinutes");
@@ -73,18 +83,71 @@ public class AuthController : ControllerBase
 
         var normalizedEmail = request.Email.Trim().ToLowerInvariant();
 
-        var user = await _db.AppUsers.FirstOrDefaultAsync(x => x.Email == normalizedEmail);
-        if (user == null)
+        // Read role as text to avoid Npgsql unmapped enum issues.
+        var row = await GetUserForLoginAsync(normalizedEmail);
+        if (row == null)
             return Unauthorized(new { message = "Invalid credentials." });
 
-        var ok = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
+        var ok = BCrypt.Net.BCrypt.Verify(request.Password, row.PasswordHash);
         if (!ok)
             return Unauthorized(new { message = "Invalid credentials." });
+
+        var role = ParseRole(row.RoleText);
+
+        var user = new AppUserModel
+        {
+            Id = row.Id,
+            Email = row.Email,
+            PasswordHash = row.PasswordHash,
+            Role = role
+        };
 
         var token = GenerateAccessToken(user);
         var minutes = _configuration.GetValue<int>("Jwt:AccessTokenMinutes");
 
         return Ok(new AuthResponse(token, minutes));
+    }
+
+    private sealed record UserLoginRow(Guid Id, string Email, string PasswordHash, string RoleText);
+
+    private async Task<UserLoginRow?> GetUserForLoginAsync(string normalizedEmail)
+    {
+        await using var conn = _db.Database.GetDbConnection();
+        if (conn.State != System.Data.ConnectionState.Open)
+            await conn.OpenAsync();
+
+        await using var cmd = conn.CreateCommand();
+        cmd.CommandText = @"
+            SELECT id, email, password_hash, role::text AS role_text
+            FROM app_users
+            WHERE email = @email
+            LIMIT 1;";
+
+        var emailParam = cmd.CreateParameter();
+        emailParam.ParameterName = "@email";
+        emailParam.Value = normalizedEmail;
+        cmd.Parameters.Add(emailParam);
+
+        await using var reader = await cmd.ExecuteReaderAsync();
+        if (!await reader.ReadAsync())
+            return null;
+
+        var id = reader.GetGuid(0);
+        var email = reader.GetString(1);
+        var passwordHash = reader.GetString(2);
+        var roleText = reader.GetString(3);
+
+        return new UserLoginRow(id, email, passwordHash, roleText);
+    }
+
+    private static AffiliateRoleModel ParseRole(string roleText)
+    {
+        var normalized = roleText?.Trim().ToLowerInvariant();
+        return normalized switch
+        {
+            "admin" => AffiliateRoleModel.admin,
+            _ => AffiliateRoleModel.affiliate
+        };
     }
 
     private string GenerateAccessToken(AppUserModel user)
@@ -101,9 +164,14 @@ public class AuthController : ControllerBase
 
         var claims = new List<Claim>
         {
-            // Must match TokenValidationParameters NameClaimType="sub" and RoleClaimType="role"
+            // Must match TokenValidationParameters NameClaimType="sub"
             new Claim("sub", user.Id.ToString()),
-            new Claim("role", user.Role.ToString())
+
+            // Support both claim types:
+            // - "role" (used by TokenValidationParameters.RoleClaimType="role")
+            // - ClaimTypes.Role (used by IsInRole / Roles authorization)
+            new Claim("role", user.Role.ToString()),
+            new Claim(ClaimTypes.Role, user.Role.ToString())
         };
 
         var token = new JwtSecurityToken(

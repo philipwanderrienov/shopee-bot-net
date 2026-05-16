@@ -1,1 +1,2 @@
-C:\Users\philip.wanderrienov\Music\shopee-bot-net\shopeebotnet.client\obj\Debug\shopeebotnet.client.esproj.CoreCompileInputs.cache
+C:/Users/philip.wanderrienov/Music/shopee-bot-net/shopeebotnet.client/obj/Debug/shopeebotnet.client.esproj.CoreCompileInputs.cache
+/Users/philipwanderrienov/Documents/shopee-bot-net/shopeebotnet.client/obj/Debug/shopeebotnet.client.esproj.CoreCompileInputs.cache

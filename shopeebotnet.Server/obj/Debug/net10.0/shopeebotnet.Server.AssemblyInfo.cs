@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("shopeebotnet.Server")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9da36d0955ced6ef4b9fcf16bc5eb545cf185de7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4d91a42e700658825a5e90fc24ac9cbb7ff50303")]
 [assembly: System.Reflection.AssemblyProductAttribute("shopeebotnet.Server")]
 [assembly: System.Reflection.AssemblyTitleAttribute("shopeebotnet.Server")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

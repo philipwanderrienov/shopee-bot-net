@@ -1,3 +1,5 @@
+
+
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
@@ -34,10 +36,30 @@ public class PostbackController : ControllerBase
         if (string.IsNullOrWhiteSpace(secret))
             return StatusCode(500, new { message = "Postback secret is not configured." });
 
-        if (!Request.Headers.TryGetValue("X-Postback-Signature", out var signatureHeader) ||
-            string.IsNullOrWhiteSpace(signatureHeader))
+        var signatureHeaderNames = new[]
         {
-            return Unauthorized(new { message = "Missing X-Postback-Signature header." });
+            "X-Postback-Signature",
+            "X-Signature",
+            "X-Hub-Signature"
+        };
+
+        string? signatureHeaderValue = null;
+        foreach (var headerName in signatureHeaderNames)
+        {
+            if (Request.Headers.TryGetValue(headerName, out var candidate) &&
+                !string.IsNullOrWhiteSpace(candidate))
+            {
+                signatureHeaderValue = candidate.ToString();
+                break;
+            }
+        }
+
+        if (string.IsNullOrWhiteSpace(signatureHeaderValue))
+        {
+            return Unauthorized(new
+            {
+                message = "Missing postback signature header. Tried: X-Postback-Signature, X-Signature, X-Hub-Signature."
+            });
         }
 
         // Compute signature over raw body bytes (stable for the caller)
@@ -50,7 +72,7 @@ public class PostbackController : ControllerBase
         Request.Body.Position = 0;
 
         var expectedSignature = ComputeHmacSha256Hex(secret, rawBody);
-        if (!SecureEquals(signatureHeader.ToString(), expectedSignature))
+        if (!SecureEquals(signatureHeaderValue!, expectedSignature))
             return Unauthorized(new { message = "Invalid postback signature." });
 
         ConversionPostbackRequest? payload;
@@ -75,28 +97,47 @@ public class PostbackController : ControllerBase
         if (string.IsNullOrWhiteSpace(payload.OrderId))
             return BadRequest(new { message = "OrderId is required." });
 
+        var orderId = payload.OrderId.Trim();
+
         var click = await _db.Clicks.FirstOrDefaultAsync(x => x.Id == payload.ClickId);
         if (click == null)
             return NotFound(new { message = "Click not found." });
 
         var now = DateTime.UtcNow;
-
         var status = ParseStatus(payload.Status);
+        var statusText = status.ToString(); // "pending" | "approved" | "rejected"
 
-        // Create conversion record (simplified: no idempotency key yet)
-        var conversion = new ConversionModel
-        {
-            Id = Guid.NewGuid(),
-            ClickId = payload.ClickId,
-            OrderId = payload.OrderId.Trim(),
-            Commission = payload.Commission,
-            Status = status,
-            RecordedAt = now
-        };
+        // Idempotency: if this postback is retried, avoid double-inserting conversions.
+        // Instead of using EF to insert/update the enum (which is currently failing),
+        // we do explicit SQL casts to the postgres enum type.
+        var existingConversionId = await _db.Conversions
+            .AsNoTracking()
+            .Where(x => x.ClickId == payload.ClickId && x.OrderId == orderId)
+            .Select(x => x.Id)
+            .FirstOrDefaultAsync();
 
         click.Converted = true;
 
-        _db.Conversions.Add(conversion);
+        if (existingConversionId == Guid.Empty)
+        {
+            var conversionId = Guid.NewGuid();
+
+            await _db.Database.ExecuteSqlInterpolatedAsync($@"
+                INSERT INTO conversions (id, click_id, order_id, commission, status, recorded_at)
+                VALUES ({conversionId}, {payload.ClickId}, {orderId}, {payload.Commission}, {statusText}::conversion_status, {now});
+            ");
+        }
+        else
+        {
+            await _db.Database.ExecuteSqlInterpolatedAsync($@"
+                UPDATE conversions
+                SET commission = {payload.Commission},
+                    status = {statusText}::conversion_status,
+                    recorded_at = {now}
+                WHERE click_id = {payload.ClickId} AND order_id = {orderId};
+            ");
+        }
+
         await _db.SaveChangesAsync();
 
         return Ok(new { message = "Postback recorded." });

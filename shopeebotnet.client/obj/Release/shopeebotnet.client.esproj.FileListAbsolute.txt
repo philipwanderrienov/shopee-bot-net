@@ -1,0 +1,1 @@
+/Users/philipwanderrienov/Documents/shopee-bot-net/shopeebotnet.client/obj/Release/shopeebotnet.client.esproj.CoreCompileInputs.cache

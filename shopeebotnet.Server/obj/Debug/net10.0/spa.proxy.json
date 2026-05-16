@@ -3,7 +3,7 @@
 "ServerUrl": "https://localhost:65228",
 "RedirectUrl": "",
 "LaunchCommand": "npm start",
-"WorkingDirectory": "C:\\Users\\philip.wanderrienov\\Music\\shopee-bot-net\\shopeebotnet.Server\\..\\shopeebotnet.client",
+"WorkingDirectory": "/Users/philipwanderrienov/Documents/shopee-bot-net/shopeebotnet.Server/../shopeebotnet.client",
 "MaxTimeoutInSeconds": "120",
 "KeepRunning": "false"
 }

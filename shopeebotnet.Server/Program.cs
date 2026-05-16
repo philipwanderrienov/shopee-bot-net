@@ -58,7 +58,7 @@ builder.Services
             ClockSkew = TimeSpan.FromSeconds(30),
 
             NameClaimType = "sub",
-            RoleClaimType = "role"
+            RoleClaimType = System.Security.Claims.ClaimTypes.Role
         };
     });
 

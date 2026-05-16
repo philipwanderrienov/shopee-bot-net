@@ -1,6 +1,0 @@
-@jitu_dashboard.Server_HostAddress = http://localhost:5071
-
-GET {{jitu_dashboard.Server_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
