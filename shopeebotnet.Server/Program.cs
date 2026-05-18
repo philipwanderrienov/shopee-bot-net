@@ -3,6 +3,8 @@ using BCrypt.Net;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using shopeebotnet.Server.DbContext;
+using shopeebotnet.Server.Configs;
+using shopeebotnet.Server.Service;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,6 +28,11 @@ if (string.IsNullOrWhiteSpace(jwtIssuer) || string.IsNullOrWhiteSpace(jwtAudienc
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Product sync (scheduler + manual trigger)
+builder.Services.Configure<ProductSyncOptions>(builder.Configuration.GetSection("ProductSync"));
+builder.Services.AddScoped<IProductSyncService, ProductSyncService>();
+builder.Services.AddHostedService<ProductSyncBackgroundService>();
 
 // EF Core (PostgreSQL)
 builder.Services.AddDbContext<ShopeeAffiliateContext>(options =>
