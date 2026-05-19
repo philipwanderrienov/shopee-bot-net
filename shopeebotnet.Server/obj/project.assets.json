@@ -2951,24 +2951,33 @@
     ]
   },
   "packageFolders": {
-    "/Users/philipwanderrienov/.nuget/packages/": {}
+    "C:\\Users\\philip.wanderrienov\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/philipwanderrienov/Documents/shopee-bot-net/shopeebotnet.Server/shopeebotnet.Server.csproj",
+      "projectUniqueName": "C:\\Users\\philip.wanderrienov\\Music\\shopee-bot-net\\shopeebotnet.Server\\shopeebotnet.Server.csproj",
       "projectName": "shopeebotnet.Server",
-      "projectPath": "/Users/philipwanderrienov/Documents/shopee-bot-net/shopeebotnet.Server/shopeebotnet.Server.csproj",
-      "packagesPath": "/Users/philipwanderrienov/.nuget/packages/",
-      "outputPath": "/Users/philipwanderrienov/Documents/shopee-bot-net/shopeebotnet.Server/obj/",
+      "projectPath": "C:\\Users\\philip.wanderrienov\\Music\\shopee-bot-net\\shopeebotnet.Server\\shopeebotnet.Server.csproj",
+      "packagesPath": "C:\\Users\\philip.wanderrienov\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\philip.wanderrienov\\Music\\shopee-bot-net\\shopeebotnet.Server\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "/Users/philipwanderrienov/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\philip.wanderrienov\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Users\\philip.wanderrienov\\Documents\\Telerik-Blazor-9\\Telerik Package": {},
+        "C:\\Users\\philip.wanderrienov\\Documents\\Telerik-Blazor\\Package": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -3045,7 +3054,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/10.0.201/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.204/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.AspNetCore": "(,10.0.32767]",
           "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
